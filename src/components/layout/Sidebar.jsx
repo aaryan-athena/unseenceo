@@ -1,0 +1,81 @@
+import { NavLink } from 'react-router-dom';
+import { Home, LayoutDashboard, Target, Users, Lightbulb, Handshake, Info, X } from 'lucide-react';
+import { useData } from '../../context/DataContext';
+
+const navItems = [
+  { to: '/', icon: Home, label: 'Home' },
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/agency', icon: Target, label: 'Agency Score' },
+  { to: '/profiles', icon: Users, label: 'Profiles' },
+  { to: '/builder', icon: Lightbulb, label: 'Biz Builder' },
+  { to: '/matching', icon: Handshake, label: 'Matching' },
+  { to: '/about', icon: Info, label: 'About' },
+];
+
+export default function Sidebar() {
+  const { sidebarOpen, dispatch } = useData();
+
+  return (
+    <>
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => dispatch({ type: 'CLOSE_SIDEBAR' })}
+        />
+      )}
+
+      <aside
+        className={`fixed top-0 left-0 z-50 h-full w-64 bg-warm-900 text-warm-100 flex flex-col transition-transform duration-300 ease-in-out
+          lg:translate-x-0 lg:top-16 lg:z-30 lg:h-[calc(100vh-4rem)]
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+      >
+        {/* Mobile header */}
+        <div className="flex items-center justify-between px-4 pt-6 pb-4 lg:hidden shrink-0">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">UC</span>
+            </div>
+            <span className="font-bold">The Unseen CEOs</span>
+          </div>
+          <button
+            onClick={() => dispatch({ type: 'CLOSE_SIDEBAR' })}
+            className="p-1 rounded hover:bg-warm-800"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Nav — scrollable so it never overlaps the bottom card */}
+        <nav className="flex-1 overflow-y-auto px-3 pt-6 space-y-1 lg:pt-6">
+          {navItems.map(({ to, icon: Icon, label }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={to === '/'}
+              onClick={() => dispatch({ type: 'CLOSE_SIDEBAR' })}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200
+                ${isActive
+                  ? 'bg-primary-500/20 text-primary-300 border-l-3 border-primary-400'
+                  : 'text-warm-300 hover:bg-warm-800 hover:text-warm-100'
+                }`
+              }
+            >
+              <Icon size={18} />
+              {label}
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* Bottom card — pushed to bottom by flex, never overlaps nav */}
+        <div className="shrink-0 px-4 py-4 border-t border-warm-800">
+          <div className="bg-warm-800 rounded-lg p-3">
+            <p className="text-xs text-warm-400 mb-0.5">Platform by</p>
+            <p className="text-sm font-medium text-warm-200">Student Researchers</p>
+            <p className="text-xs text-warm-500 mt-0.5">Empowering real women-led growth</p>
+          </div>
+        </div>
+      </aside>
+    </>
+  );
+}
