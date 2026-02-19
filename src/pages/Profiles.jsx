@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Users } from 'lucide-react';
+import { Users, MapPin, IndianRupee, TrendingUp } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { getScoreTierColor, getScoreTier, formatINR } from '../utils/agencyScore';
 
@@ -9,57 +9,124 @@ export default function Profiles() {
 
   return (
     <div>
-      <div className="mb-6">
-        <div className="flex items-center gap-3 mb-1">
-          <div className="p-2 bg-primary-50 rounded-lg">
-            <Users size={20} className="text-primary-500" />
+      {/* Gradient page header */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-primary-600 via-primary-500 to-amber-500 rounded-2xl p-6 mb-6 shadow-lg">
+        <div className="absolute -top-6 -right-8 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-24 h-16 bg-amber-200/20 rounded-full blur-lg pointer-events-none" />
+        <div className="relative z-10 flex items-center justify-between gap-4">
+          <div className="anim-fade-in-up">
+            <div className="flex items-center gap-2 mb-1">
+              <Users size={16} className="text-white/75" />
+              <p className="text-white/70 text-[11px] font-semibold uppercase tracking-widest">Entrepreneur Directory</p>
+            </div>
+            <h1 className="text-2xl font-bold text-white">Entrepreneur Profiles</h1>
+            <p className="text-white/70 text-sm mt-1">Investor-ready profiles with business metrics and agency scores</p>
           </div>
-          <h1 className="text-2xl font-bold text-warm-900">Entrepreneur Profiles</h1>
+          <div className="anim-fade-in-up delay-200 shrink-0 bg-white/15 border border-white/25 rounded-xl px-4 py-2 text-center">
+            <p className="text-2xl font-black text-white">{filteredEntrepreneurs.length}</p>
+            <p className="text-white/70 text-[11px] font-medium">Profiles</p>
+          </div>
         </div>
-        <p className="text-warm-500 text-sm mt-1">Investor-ready profiles with business metrics and agency scores</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredEntrepreneurs.map(e => {
-          const tierColors = getScoreTierColor(e.agencyScore.percentage);
-          const initials = e.name.split(' ').map(n => n[0]).join('');
-          return (
-            <div
-              key={e.id}
-              onClick={() => navigate(`/profiles/${e.id}`)}
-              className="bg-white rounded-xl border border-warm-200 shadow-sm overflow-hidden hover:shadow-md hover:border-primary-200 transition-all duration-200 cursor-pointer"
-            >
-              <div className="h-16 bg-gradient-to-r from-primary-500 to-primary-600 relative">
-                <div
-                  className="absolute -bottom-5 left-4 w-10 h-10 rounded-lg flex items-center justify-center text-white text-sm font-bold border-2 border-white shadow"
-                  style={{ backgroundColor: e.avatarColor }}
-                >
-                  {initials}
-                </div>
-              </div>
-              <div className="pt-8 px-4 pb-4">
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <p className="text-sm font-semibold text-warm-900">{e.name}</p>
-                    <p className="text-xs text-warm-400">{e.businessName}</p>
+      {filteredEntrepreneurs.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-warm-200 p-16 text-center shadow-sm">
+          <div className="w-16 h-16 bg-warm-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Users size={28} className="text-warm-300" />
+          </div>
+          <p className="text-warm-600 font-semibold mb-1">No profiles found</p>
+          <p className="text-warm-400 text-sm">Adjust your search or filters to see entrepreneur profiles.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredEntrepreneurs.map((e, i) => {
+            const tierColors = getScoreTierColor(e.agencyScore.percentage);
+            const initials = e.name.split(' ').map(n => n[0]).join('');
+            const tier = getScoreTier(e.agencyScore.percentage);
+            return (
+              <div
+                key={e.id}
+                onClick={() => navigate(`/profiles/${e.id}`)}
+                className="anim-fade-in-up group bg-white rounded-2xl border border-warm-200 shadow-sm overflow-hidden hover:shadow-lg hover:border-primary-200 hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                style={{ animationDelay: `${i * 0.04}s` }}
+              >
+                {/* Card header */}
+                <div className="h-20 bg-gradient-to-r from-primary-500 to-primary-700 relative">
+                  {/* Decorative circles */}
+                  <div className="absolute -top-4 -right-4 w-16 h-16 bg-white/10 rounded-full" />
+                  <div className="absolute -bottom-6 right-8 w-12 h-12 bg-white/5 rounded-full" />
+                  {/* Avatar */}
+                  <div
+                    className="absolute -bottom-6 left-4 w-12 h-12 rounded-xl flex items-center justify-center text-white text-sm font-bold border-2 border-white shadow-md"
+                    style={{ backgroundColor: e.avatarColor }}
+                  >
+                    {initials}
                   </div>
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${tierColors.bg} ${tierColors.text}`}>
-                    {e.agencyScore.percentage}%
-                  </span>
+                  {/* Shortlisted badge */}
+                  {e.isShortlisted && (
+                    <div className="absolute top-2.5 right-3 bg-amber-400 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">
+                      Shortlisted
+                    </div>
+                  )}
                 </div>
-                <div className="flex flex-wrap gap-1.5 mb-3">
-                  <span className="text-xs bg-warm-100 text-warm-600 px-2 py-0.5 rounded-full">{e.sector}</span>
-                  <span className="text-xs bg-warm-100 text-warm-500 px-2 py-0.5 rounded-full">{e.location}</span>
-                </div>
-                <div className="flex items-center justify-between text-xs text-warm-500">
-                  <span>Revenue: {formatINR(e.monthlyRevenue)}/mo</span>
-                  <span className={`font-medium ${tierColors.text}`}>{getScoreTier(e.agencyScore.percentage)}</span>
+
+                {/* Card body */}
+                <div className="pt-9 px-4 pb-4">
+                  {/* Name + score */}
+                  <div className="flex items-start justify-between mb-1">
+                    <div className="min-w-0 pr-2">
+                      <p className="text-sm font-semibold text-warm-900 truncate">{e.name}</p>
+                      <p className="text-xs text-warm-400 truncate">{e.businessName}</p>
+                    </div>
+                    <span className={`shrink-0 text-xs font-bold px-2 py-1 rounded-lg ${tierColors.bg} ${tierColors.text}`}>
+                      {e.agencyScore.percentage}%
+                    </span>
+                  </div>
+
+                  {/* Agency score bar */}
+                  <div className="mt-2 mb-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className={`text-[10px] font-semibold ${tierColors.text}`}>{tier}</span>
+                    </div>
+                    <div className="h-1.5 bg-warm-100 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          e.agencyScore.percentage >= 76 ? 'bg-green-400' :
+                          e.agencyScore.percentage >= 48 ? 'bg-amber-400' : 'bg-red-400'
+                        }`}
+                        style={{ width: `${e.agencyScore.percentage}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    <span className="text-[10px] bg-primary-50 text-primary-600 font-medium px-2 py-0.5 rounded-full border border-primary-100">
+                      {e.sector}
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[10px] bg-warm-100 text-warm-500 px-2 py-0.5 rounded-full">
+                      <MapPin size={9} />
+                      {e.location}
+                    </span>
+                  </div>
+
+                  {/* Metrics row */}
+                  <div className="flex items-center justify-between pt-3 border-t border-warm-100">
+                    <div className="flex items-center gap-1 text-xs text-warm-500">
+                      <IndianRupee size={11} className="text-warm-400" />
+                      <span>{formatINR(e.monthlyRevenue)}<span className="text-warm-400">/mo</span></span>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-green-600 font-medium">
+                      <TrendingUp size={11} />
+                      <span>{formatINR(e.monthlyProfit)} profit</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

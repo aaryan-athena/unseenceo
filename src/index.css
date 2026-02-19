@@ -43,3 +43,76 @@ body {
   scrollbar-width: thin;
   scrollbar-color: var(--color-warm-300) transparent;
 }
+
+/* ── Landing page animations ─────────────────────────────────── */
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-48px) rotate(-3deg); }
+  to   { opacity: 1; transform: translateX(0)     rotate(-3deg); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(48px)  rotate(3deg); }
+  to   { opacity: 1; transform: translateX(0)     rotate(3deg); }
+}
+
+@keyframes floatLeft {
+  0%, 100% { transform: translateY(0px)   rotate(-3deg); }
+  50%       { transform: translateY(-14px) rotate(-3deg); }
+}
+
+@keyframes floatRight {
+  0%, 100% { transform: translateY(0px)   rotate(3deg); }
+  50%       { transform: translateY(-14px) rotate(3deg); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(233,116,81,0); }
+  50%       { box-shadow: 0 0 32px 6px rgba(233,116,81,0.45); }
+}
+
+@keyframes badgePop {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Utility animation classes */
+.anim-fade-in-up       { animation: fadeInUp 0.7s ease both; }
+.anim-fade-in          { animation: fadeIn   0.6s ease both; }
+.anim-slide-in-left    { animation: slideInLeft  0.9s cubic-bezier(.22,.68,0,1.2) both; }
+.anim-slide-in-right   { animation: slideInRight 0.9s cubic-bezier(.22,.68,0,1.2) both; }
+.anim-float-left       { animation: floatLeft  5s ease-in-out infinite; }
+.anim-float-right      { animation: floatRight 5s ease-in-out 0.8s infinite; }
+.anim-glow             { animation: glowPulse 3s ease-in-out infinite; }
+.anim-badge-pop        { animation: badgePop  0.5s cubic-bezier(.22,.68,0,1.4) both; }
+.anim-count-up         { animation: countUp   0.7s ease both; }
+
+/* Delay helpers */
+.delay-100  { animation-delay: 0.10s; }
+.delay-200  { animation-delay: 0.20s; }
+.delay-300  { animation-delay: 0.30s; }
+.delay-400  { animation-delay: 0.40s; }
+.delay-500  { animation-delay: 0.50s; }
+.delay-600  { animation-delay: 0.60s; }
+.delay-700  { animation-delay: 0.70s; }
+.delay-800  { animation-delay: 0.80s; }
+.delay-900  { animation-delay: 0.90s; }
+.delay-1000 { animation-delay: 1.00s; }
+.delay-1100 { animation-delay: 1.10s; }
+.delay-1200 { animation-delay: 1.20s; }
+

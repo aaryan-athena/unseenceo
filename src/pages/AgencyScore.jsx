@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Target, ArrowLeftRight } from 'lucide-react';
+import { Target, ArrowLeftRight, Activity } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { SECTORS } from '../data/mockData';
 import Card from '../components/common/Card';
@@ -37,19 +37,29 @@ export default function AgencyScore() {
   if (comparisonEntrepreneurs.length === 2) {
     return (
       <div>
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-warm-900">Agency Score Comparison</h1>
-            <p className="text-warm-500 text-sm mt-1">
-              Comparing {comparisonEntrepreneurs[0].name} vs {comparisonEntrepreneurs[1].name}
-            </p>
+        <div className="relative overflow-hidden bg-gradient-to-r from-amber-500 via-primary-500 to-primary-600 rounded-2xl p-6 mb-6 shadow-lg">
+          <div className="absolute -top-6 -right-6 w-28 h-28 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="relative z-10 flex items-center justify-between gap-4">
+            <div className="anim-fade-in-up">
+              <div className="flex items-center gap-2 mb-1">
+                <ArrowLeftRight size={16} className="text-white/75" />
+                <p className="text-white/70 text-[11px] font-semibold uppercase tracking-widest">Comparison Mode</p>
+              </div>
+              <h1 className="text-2xl font-bold text-white">Agency Score Comparison</h1>
+              <p className="text-white/70 text-sm mt-1">
+                {comparisonEntrepreneurs[0].name} vs {comparisonEntrepreneurs[1].name}
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                dispatch({ type: 'TOGGLE_COMPARISON', payload: comparisonIds[0] });
+                dispatch({ type: 'TOGGLE_COMPARISON', payload: comparisonIds[1] });
+              }}
+              className="shrink-0 bg-white/15 hover:bg-white/25 border border-white/30 text-white text-sm font-medium px-4 py-2 rounded-xl transition-all duration-200"
+            >
+              Clear Comparison
+            </button>
           </div>
-          <button
-            onClick={() => { dispatch({ type: 'TOGGLE_COMPARISON', payload: comparisonIds[0] }); dispatch({ type: 'TOGGLE_COMPARISON', payload: comparisonIds[1] }); }}
-            className="text-sm text-primary-600 hover:text-primary-700 font-medium"
-          >
-            Clear Comparison
-          </button>
         </div>
 
         <Card className="mb-6">
@@ -73,9 +83,9 @@ export default function AgencyScore() {
       <div>
         <button
           onClick={() => setSearchParams({})}
-          className="text-sm text-primary-600 hover:text-primary-700 font-medium mb-4 inline-block"
+          className="inline-flex items-center gap-1 text-sm text-primary-600 hover:text-primary-700 font-medium mb-4"
         >
-          &larr; Back to Overview
+          ← Back to Overview
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -89,22 +99,22 @@ export default function AgencyScore() {
 
         <Card title="Methodology" className="mt-6">
           <p className="text-sm text-warm-600 leading-relaxed">
-            The Agency Score is based on 5 parameters, each rated 1-5 through structured interviews with the entrepreneur.
-            The score assesses whether the woman registered as the business owner genuinely makes key business decisions.
-            A higher score indicates stronger independent leadership and decision-making power.
+            The Agency Score is based on 5 parameters, each rated 1–5 through structured interviews.
+            It assesses whether the woman registered as the business owner genuinely makes key decisions.
+            A higher score indicates stronger independent leadership.
           </p>
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+            <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
               <p className="text-sm font-semibold text-green-700">High Agency</p>
-              <p className="text-xs text-green-600">76-100%</p>
+              <p className="text-xs text-green-600 mt-0.5">76–100%</p>
             </div>
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-center">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-center">
               <p className="text-sm font-semibold text-amber-700">Moderate Agency</p>
-              <p className="text-xs text-amber-600">48-75%</p>
+              <p className="text-xs text-amber-600 mt-0.5">48–75%</p>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-center">
+            <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-center">
               <p className="text-sm font-semibold text-red-700">Low Agency</p>
-              <p className="text-xs text-red-600">Below 48%</p>
+              <p className="text-xs text-red-600 mt-0.5">Below 48%</p>
             </div>
           </div>
         </Card>
@@ -115,24 +125,33 @@ export default function AgencyScore() {
   // Overview grid
   return (
     <div>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-warm-900">Agency Score</h1>
-          <p className="text-warm-500 text-sm mt-1">Visual breakdown of leadership indicators for each entrepreneur</p>
-        </div>
-        {comparisonIds.length > 0 && (
-          <div className="flex items-center gap-2 bg-primary-50 border border-primary-200 rounded-lg px-3 py-2">
-            <ArrowLeftRight size={14} className="text-primary-500" />
-            <span className="text-sm text-primary-700">{comparisonIds.length}/2 selected for comparison</span>
+      {/* Gradient header */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-primary-600 via-primary-500 to-amber-400 rounded-2xl p-6 mb-6 shadow-lg">
+        <div className="absolute -top-6 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="anim-fade-in-up">
+            <div className="flex items-center gap-2 mb-1">
+              <Activity size={16} className="text-white/75" />
+              <p className="text-white/70 text-[11px] font-semibold uppercase tracking-widest">Leadership Analysis</p>
+            </div>
+            <h1 className="text-2xl font-bold text-white">Agency Score</h1>
+            <p className="text-white/70 text-sm mt-1">Visual breakdown of leadership indicators for each entrepreneur</p>
           </div>
-        )}
+          {comparisonIds.length > 0 && (
+            <div className="anim-fade-in-up delay-200 flex items-center gap-2 bg-white/15 border border-white/25 rounded-xl px-3 py-2">
+              <ArrowLeftRight size={14} className="text-white" />
+              <span className="text-sm text-white font-medium">{comparisonIds.length}/2 selected</span>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="flex flex-wrap gap-3 mb-6">
+      {/* Filters */}
+      <div className="flex flex-wrap gap-3 mb-6 anim-fade-in-up delay-100">
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="text-sm border border-warm-200 rounded-lg px-3 py-2 bg-white text-warm-700"
+          className="text-sm border border-warm-200 rounded-xl px-3 py-2 bg-white text-warm-700 shadow-sm"
         >
           <option value="highest">Highest Score</option>
           <option value="lowest">Lowest Score</option>
@@ -141,14 +160,14 @@ export default function AgencyScore() {
         <select
           value={sectorFilter}
           onChange={(e) => setSectorFilter(e.target.value)}
-          className="text-sm border border-warm-200 rounded-lg px-3 py-2 bg-white text-warm-700"
+          className="text-sm border border-warm-200 rounded-xl px-3 py-2 bg-white text-warm-700 shadow-sm"
         >
           <option value="all">All Sectors</option>
           {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 anim-fade-in-up delay-200">
         {filtered.map(e => (
           <div key={e.id} onClick={() => setSearchParams({ id: e.id })}>
             <ScoreCard

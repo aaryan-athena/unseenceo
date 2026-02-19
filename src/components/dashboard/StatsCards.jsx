@@ -1,4 +1,4 @@
-import { Users, Target, IndianRupee, Star } from 'lucide-react';
+import { Users, Target, IndianRupee, Star, TrendingUp } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { formatINR } from '../../utils/agencyScore';
 
@@ -10,43 +10,63 @@ export default function StatsCards() {
       label: 'Total Entrepreneurs',
       value: summaryStats.total,
       icon: Users,
-      color: 'bg-primary-50 text-primary-600',
-      iconBg: 'bg-primary-100',
+      gradient: 'from-primary-500 to-primary-600',
+      bg: 'bg-primary-50',
+      border: 'border-primary-100',
+      text: 'text-primary-600',
+      delay: '',
     },
     {
       label: 'Avg Agency Score',
       value: `${summaryStats.avgAgencyScore}%`,
       icon: Target,
-      color: 'bg-amber-50 text-amber-600',
-      iconBg: 'bg-amber-100',
+      gradient: 'from-amber-400 to-amber-500',
+      bg: 'bg-amber-50',
+      border: 'border-amber-100',
+      text: 'text-amber-600',
+      delay: 'delay-100',
     },
     {
       label: 'Total Funding Needed',
       value: formatINR(summaryStats.totalFunding),
       icon: IndianRupee,
-      color: 'bg-green-50 text-green-600',
-      iconBg: 'bg-green-100',
+      gradient: 'from-green-500 to-emerald-600',
+      bg: 'bg-green-50',
+      border: 'border-green-100',
+      text: 'text-green-600',
+      delay: 'delay-200',
     },
     {
       label: 'Shortlisted',
       value: summaryStats.shortlisted,
       icon: Star,
-      color: 'bg-purple-50 text-purple-600',
-      iconBg: 'bg-purple-100',
+      gradient: 'from-purple-500 to-purple-600',
+      bg: 'bg-purple-50',
+      border: 'border-purple-100',
+      text: 'text-purple-600',
+      delay: 'delay-300',
     },
   ];
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {cards.map((card, i) => (
-        <div key={i} className={`${card.color} rounded-xl p-4 lg:p-5 border border-warm-100`}>
+        <div
+          key={i}
+          className={`anim-fade-in-up ${card.delay} relative overflow-hidden ${card.bg} border ${card.border} rounded-2xl p-4 lg:p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group`}
+        >
+          {/* Subtle gradient accent top bar */}
+          <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${card.gradient} rounded-t-2xl`} />
+
           <div className="flex items-center justify-between mb-3">
-            <div className={`p-2 rounded-lg ${card.iconBg}`}>
-              <card.icon size={18} />
+            <div className={`p-2 rounded-xl bg-gradient-to-br ${card.gradient} shadow-sm`}>
+              <card.icon size={16} className="text-white" />
             </div>
+            <TrendingUp size={14} className={`${card.text} opacity-40 group-hover:opacity-70 transition-opacity`} />
           </div>
-          <p className="text-2xl lg:text-3xl font-bold text-warm-900">{card.value}</p>
-          <p className="text-sm text-warm-500 mt-1">{card.label}</p>
+
+          <p className="text-2xl lg:text-3xl font-black text-warm-900">{card.value}</p>
+          <p className="text-xs text-warm-500 mt-1 font-medium">{card.label}</p>
         </div>
       ))}
     </div>
