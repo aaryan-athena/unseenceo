@@ -1,5 +1,6 @@
-import { createContext, useContext, useReducer, useEffect } from 'react';
-import { entrepreneurs as mockEntrepreneurs } from '../data/mockData';
+import { createContext, useContext, useReducer, useEffect, useState } from 'react';
+import { db } from '../firebase';
+import { collection, onSnapshot } from 'firebase/firestore';
 
 const DataContext = createContext(null);
 
@@ -12,25 +13,8 @@ const initialFilters = {
 };
 
 function getInitialState() {
-  try {
-    const stored = localStorage.getItem('unseenceo_data');
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return {
-          entrepreneurs: parsed,
-          filters: initialFilters,
-          selectedEntrepreneurId: null,
-          comparisonIds: [],
-          sidebarOpen: false,
-        };
-      }
-    }
-  } catch (e) {
-    console.warn('localStorage load failed:', e);
-  }
   return {
-    entrepreneurs: mockEntrepreneurs,
+    entrepreneurs: [],
     filters: initialFilters,
     selectedEntrepreneurId: null,
     comparisonIds: [],
@@ -76,7 +60,7 @@ function reducer(state, action) {
     case 'CLOSE_SIDEBAR':
       return { ...state, sidebarOpen: false };
     case 'RESET_DATA':
-      return { ...state, entrepreneurs: mockEntrepreneurs };
+      return { ...state, entrepreneurs: [] };
     default:
       return state;
   }
@@ -84,16 +68,20 @@ function reducer(state, action) {
 
 export function DataProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, null, getInitialState);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      localStorage.setItem('unseenceo_data', JSON.stringify(state.entrepreneurs));
-    } catch (e) {
-      console.warn('localStorage save failed:', e);
-    }
-  }, [state.entrepreneurs]);
+    const unsubscribe = onSnapshot(collection(db, 'entrepreneurs'), (snapshot) => {
+      const ents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      dispatch({ type: 'SET_ENTREPRENEURS', payload: ents });
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const filteredEntrepreneurs = state.entrepreneurs.filter(e => {
+    if (!e || !e.id || !e.agencyScore || !e.name) return false; // guard against corrupted localStorage entries
     const { sector, minAgencyScore, maxFundingNeeded, shortlistedOnly, searchQuery } = state.filters;
     if (sector !== 'all' && e.sector !== sector) return false;
     if (e.agencyScore.percentage < minAgencyScore) return false;
@@ -108,14 +96,17 @@ export function DataProvider({ children }) {
     return true;
   });
 
+  const validEntrepreneurs = state.entrepreneurs.filter(e => e?.agencyScore?.percentage != null);
   const summaryStats = {
     total: state.entrepreneurs.length,
-    avgAgencyScore: Math.round(state.entrepreneurs.reduce((sum, e) => sum + e.agencyScore.percentage, 0) / state.entrepreneurs.length),
-    totalFunding: state.entrepreneurs.reduce((sum, e) => sum + e.fundingNeeded, 0),
-    shortlisted: state.entrepreneurs.filter(e => e.isShortlisted).length,
-    highAgency: state.entrepreneurs.filter(e => e.agencyScore.percentage >= 76).length,
-    moderateAgency: state.entrepreneurs.filter(e => e.agencyScore.percentage >= 48 && e.agencyScore.percentage < 76).length,
-    lowAgency: state.entrepreneurs.filter(e => e.agencyScore.percentage < 48).length,
+    avgAgencyScore: validEntrepreneurs.length
+      ? Math.round(validEntrepreneurs.reduce((sum, e) => sum + e.agencyScore.percentage, 0) / validEntrepreneurs.length)
+      : 0,
+    totalFunding: validEntrepreneurs.reduce((sum, e) => sum + (e.fundingNeeded ?? 0), 0),
+    shortlisted: state.entrepreneurs.filter(e => e?.isShortlisted).length,
+    highAgency: validEntrepreneurs.filter(e => e.agencyScore.percentage >= 76).length,
+    moderateAgency: validEntrepreneurs.filter(e => e.agencyScore.percentage >= 48 && e.agencyScore.percentage < 76).length,
+    lowAgency: validEntrepreneurs.filter(e => e.agencyScore.percentage < 48).length,
   };
 
   const value = {
@@ -123,7 +114,7 @@ export function DataProvider({ children }) {
     dispatch,
     filteredEntrepreneurs,
     summaryStats,
-    getEntrepreneurById: (id) => state.entrepreneurs.find(e => e.id === id),
+    getEntrepreneurById: (id) => state.entrepreneurs.find(e => e && e.id === id),
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

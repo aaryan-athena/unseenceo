@@ -28,7 +28,10 @@ export default function DataUpload() {
         try {
           const data = JSON.parse(text);
           const arr = Array.isArray(data) ? data : [data];
-          setPreview(arr.map((d, i) => ({ ...d, id: d.id || `uc-upload-${Date.now()}-${i}` })));
+          const valid = arr.filter(d => d && typeof d === 'object');
+          setPreview(valid.map((d, i) => ({ ...d, id: d.id || `uc-upload-${Date.now()}-${i}` })));
+          const skipped = arr.length - valid.length;
+          if (skipped > 0) setErrors([{ row: 0, message: `${skipped} null/invalid entr${skipped > 1 ? 'ies' : 'y'} in JSON were skipped.` }]);
         } catch {
           setErrors([{ row: 0, message: 'Invalid JSON file' }]);
         }

@@ -1,15 +1,22 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Star, Eye } from 'lucide-react';
+import { Star, Eye, UserPlus, CheckCircle } from 'lucide-react';
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts';
 import { formatINR, getScoreTierColor, getScoreTier } from '../../utils/agencyScore';
 import { AGENCY_PARAMETERS } from '../../data/mockData';
 import { useData } from '../../context/DataContext';
+import { useAuth } from '../../context/AuthContext';
+import { sendProfileInterest, getFunderSentConnections } from '../../utils/connections';
+import ConnectModal from '../connections/ConnectModal';
 
 export default function MatchCard({ entrepreneur }) {
   const navigate = useNavigate();
   const { dispatch } = useData();
+  const { user, userProfile } = useAuth();
   const tierColors = getScoreTierColor(entrepreneur.agencyScore.percentage);
   const initials = entrepreneur.name.split(' ').map(n => n[0]).join('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [connected, setConnected] = useState(false);
 
   const radarData = AGENCY_PARAMETERS.map(param => ({
     param: param.label.split(' ')[0],
@@ -21,6 +28,17 @@ export default function MatchCard({ entrepreneur }) {
     : entrepreneur.agencyScore.percentage >= 48
       ? 'bg-amber-500'
       : 'bg-red-500';
+
+  async function handleConnect(message) {
+    await sendProfileInterest({
+      funderUid: user.uid,
+      funderName: userProfile?.displayName ?? user.email,
+      entrepreneurId: entrepreneur.id,
+      entrepreneurName: entrepreneur.name,
+      message,
+    });
+    setConnected(true);
+  }
 
   return (
     <div className="bg-white rounded-xl border border-warm-200 shadow-sm overflow-hidden hover:shadow-md hover:border-primary-200 transition-all duration-200">
@@ -90,10 +108,32 @@ export default function MatchCard({ entrepreneur }) {
             className="flex items-center justify-center gap-1.5 text-xs font-medium text-warm-500 hover:bg-warm-50 py-2 px-3 rounded-lg transition-colors"
           >
             <Star size={12} className={entrepreneur.isShortlisted ? 'fill-amber-400 text-amber-400' : ''} />
-            {entrepreneur.isShortlisted ? 'Shortlisted' : 'Shortlist'}
+            {entrepreneur.isShortlisted ? 'Saved' : 'Save'}
+          </button>
+          <button
+            onClick={() => !connected && setModalOpen(true)}
+            disabled={connected}
+            className={`flex items-center justify-center gap-1.5 text-xs font-medium py-2 px-3 rounded-lg transition-colors
+              ${connected
+                ? 'text-green-600 bg-green-50 cursor-default'
+                : 'text-primary-600 hover:bg-primary-50'
+              }`}
+          >
+            {connected ? <CheckCircle size={12} /> : <UserPlus size={12} />}
+            {connected ? 'Connected' : 'Connect'}
           </button>
         </div>
       </div>
+
+      {modalOpen && (
+        <ConnectModal
+          title={`Connect with ${entrepreneur.name}`}
+          subtitle={`${entrepreneur.businessName} · ${entrepreneur.sector}`}
+          placeholder="Introduce yourself and explain why you're interested in supporting this venture…"
+          onSend={handleConnect}
+          onClose={() => setModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

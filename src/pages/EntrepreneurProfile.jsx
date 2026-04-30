@@ -20,7 +20,7 @@ export default function EntrepreneurProfile() {
         </div>
         <p className="text-lg font-semibold text-warm-700 mb-2">Entrepreneur not found</p>
         <p className="text-warm-500 text-sm mb-4">The profile you're looking for doesn't exist.</p>
-        <Link to="/dashboard" className="inline-flex items-center gap-1 text-primary-600 hover:text-primary-700 font-medium text-sm">
+        <Link to="/profiles" className="inline-flex items-center gap-1 text-primary-600 hover:text-primary-700 font-medium text-sm">
           <ArrowLeft size={14} />
           Back to Dashboard
         </Link>
@@ -31,7 +31,7 @@ export default function EntrepreneurProfile() {
   return (
     <div>
       <Link
-        to="/dashboard"
+        to="/profiles"
         className="inline-flex items-center gap-1.5 text-sm text-warm-500 hover:text-primary-600 font-medium mb-4 transition-colors duration-200"
       >
         <ArrowLeft size={14} />

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Upload, BarChart3, FileText, Handshake, ChevronDown, Sparkles } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import img1 from '../assets/img_1.jpg';
 import img2 from '../assets/img_2.jpg';
 
@@ -57,8 +58,54 @@ function HeroImage({ src, alt, caption, side }) {
 }
 
 export default function Landing() {
+  const { user, userType, userProfile } = useAuth();
+  const appHome = userType === 'venture' ? '/funders' : '/dashboard';
+
   return (
     <div className="min-h-screen">
+
+      {/* ── Landing Navbar ──────────────────────────────────────── */}
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-black/20 backdrop-blur-md border-b border-white/10">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-sm">UC</span>
+          </div>
+          <span className="text-white font-bold text-lg hidden sm:block">
+            The Unseen <span className="text-amber-400">CEOs</span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {user ? (
+            <>
+              <span className="hidden sm:block text-white/70 text-sm">
+                {userProfile?.displayName ?? user.email}
+              </span>
+              <Link
+                to={appHome}
+                className="bg-primary-500 hover:bg-primary-400 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors shadow-lg"
+              >
+                Open App →
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="text-white/80 hover:text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-white/10 transition-colors"
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/signup"
+                className="bg-primary-500 hover:bg-primary-400 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors shadow-lg"
+              >
+                Get Started
+              </Link>
+            </>
+          )}
+        </div>
+      </nav>
 
       {/* ── Hero ──────────────────────────────────────────────────── */}
       <section className="relative min-h-screen flex items-center bg-gradient-to-br from-primary-800 via-primary-700 to-amber-600 text-white overflow-hidden">
@@ -80,7 +127,7 @@ export default function Landing() {
         />
 
         {/* 3-column: left image | center text | right image */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-24
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-32 pb-24
                         grid grid-cols-1 lg:grid-cols-[1fr_2.2fr_1fr] gap-8 xl:gap-12 items-center">
 
           {/* Left photo */}
@@ -138,12 +185,20 @@ export default function Landing() {
             {/* CTA buttons */}
             <div className="anim-fade-in-up delay-800 flex flex-col sm:flex-row items-center gap-3 w-full justify-center">
               <Link
-                to="/dashboard"
+                to={user ? appHome : '/signup'}
                 className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-400 text-white px-7 py-3.5 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-primary-500/40 hover:shadow-2xl hover:-translate-y-0.5"
               >
-                Explore Dashboard
+                {user ? 'Go to App' : 'Get Started'}
                 <ArrowRight size={18} />
               </Link>
+              {!user && (
+              <Link
+                to="/login"
+                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur border border-white/20 text-white px-7 py-3.5 rounded-xl font-semibold transition-all duration-200"
+              >
+                Sign In
+              </Link>
+              )}
               <a
                 href="#how-it-works"
                 className="inline-flex items-center gap-2 border border-white/25 hover:border-white/50 hover:bg-white/10 text-white/80 hover:text-white px-7 py-3.5 rounded-xl font-semibold transition-all duration-200"
@@ -310,18 +365,20 @@ export default function Landing() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
-              to="/dashboard"
+              to={user ? appHome : '/signup'}
               className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-8 py-3.5 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
             >
-              Enter Dashboard
+              {user ? 'Go to App' : 'Get Started'}
               <ArrowRight size={18} />
             </Link>
+            {!user && (
             <Link
-              to="/matching"
+              to="/login"
               className="inline-flex items-center gap-2 border border-warm-300 hover:border-primary-300 text-warm-700 hover:text-primary-600 px-8 py-3.5 rounded-xl font-semibold transition-all duration-200"
             >
-              View Investor Matching
+              Sign In
             </Link>
+            )}
           </div>
         </div>
       </section>
