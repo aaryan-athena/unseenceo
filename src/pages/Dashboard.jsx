@@ -1,7 +1,6 @@
 import { RotateCcw, BarChart3 } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import StatsCards from '../components/dashboard/StatsCards';
-import DataUpload from '../components/dashboard/DataUpload';
 import EntrepreneurTable from '../components/dashboard/EntrepreneurTable';
 
 export default function Dashboard() {
@@ -42,14 +41,9 @@ export default function Dashboard() {
         <StatsCards />
       </div>
 
-      {/* Main grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-        <div className="lg:col-span-2 anim-fade-in-up delay-200">
-          <EntrepreneurTable />
-        </div>
-        <div className="anim-fade-in-up delay-300">
-          <DataUpload />
-        </div>
+      {/* Main content */}
+      <div className="mt-6 anim-fade-in-up delay-200">
+        <EntrepreneurTable />
       </div>
     </div>
   );
