@@ -218,7 +218,7 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto px-6">
           <div className="grid grid-cols-3 divide-x divide-white/20 text-center text-white">
             {[
-              { value: '12+',  labelKey: 'Entrepreneurs Profiled' },
+              { value: '5000+',  labelKey: 'Entrepreneurs Profiled' },
               { value: '5',    labelKey: 'Agency Score Parameters' },
               { value: '~₹1L', labelKey: 'Optimal Funding Amount' },
             ].map((s, i) => (
