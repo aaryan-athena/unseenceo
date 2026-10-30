@@ -460,7 +460,7 @@ Full-width marketing page (no sidebar). Sections:
 - **Hero** — gradient background, headline, 9% statistic callout, two CTAs
 - **Problem Statement** — 3 cards: Economic Inequality, Market Inefficiency, Gender Gaps
 - **How It Works** — 4-step visual flow: Data → Score → Plan → Match
-- **Key Stats strip** — 5000+ entrepreneurs, 5 parameters, ~₹1L optimal
+- **Key Stats strip** — 200+ interviewed, 23 volunteers, 5000+ entrepreneurs, 5 parameters, 70% lender-matched
 - **CTA section** — "Enter Dashboard" link
 - **Footer** — minimal branding
 
